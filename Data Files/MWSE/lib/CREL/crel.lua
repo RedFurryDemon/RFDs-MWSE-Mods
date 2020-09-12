@@ -5,17 +5,11 @@ local debug = true
 --DEPENDENCIES
 ------------------
 
-this.common = require("CREL.common")
-this.menus = require("CREL.menus")
-this.startCustom = require("CREL.startCustom")
-this.startDefault = require("CREL.startDefault")
-this.startTest = require("CREL.startTest")
-
-local common = this.common
-local menus = this.menus
-local sC = this.startCustom
-local sD = this.startDefault
-local sT = this.startTest
+local common = require("CREL.common")
+local menus = require("CREL.menus")
+local sC = require("CREL.startCustom")
+local sD = require("CREL.startDefault")
+local sT = require("CREL.startTest")
 
 ------------------
 --CHARGEN MODE SELECTION
@@ -25,12 +19,12 @@ local sT = this.startTest
 
 this.chargenModeList = {
     { text = "Custom", callback =  sC.chooseModeCustom},
-	--{ text = "Default", callback = sD.chooseModeDefault},
+	{ text = "Default", callback = sD.chooseModeDefault},
     { text = "Test", callback =  sT.chooseModeTest}
 	}
 
 local function chooseChargenMode()
-	common.messageBox({
+	menus.messageBox({
             message = "Chargen Mode",
             buttons = this.chargenModeList
         })
@@ -43,9 +37,12 @@ end
 function this.onLoaded(e)
 	if (e.newGame == true) then
 		event.trigger("[CREL] new game")
+		if (debug) then tes3.messageBox("[CREL] loaded - new game") end
+		mwse.log("[CREL] loaded - new game")
+		timer.start{ duration = 1, type = timer.simulate, callback = chooseChargenMode }
+	else
+		if (debug) then tes3.messageBox("[CREL] loaded - existing save") end
 	end
-	if (debug) then tes3.messageBox("[CREL] loaded") end
-	timer.start{ duration = 1, type = timer.simulate, callback = chooseChargenMode }
 end
 
 local function nukeDefaultChargen()
@@ -57,15 +54,62 @@ local function nukeDefaultJiubIntro()
 	mwscript.stopScript{script="CharGenNameNPC"}
 end
 
-local function nukeDefaultTrapdoor()
+local function CharGenCustomsDoor()
 	mwscript.stopScript{script="CharGenCustomsDoor"}
+end
+
+local function CharGenBed()
+	mwscript.stopScript{script="CharGenBed"}
+end
+
+local function CharGenJournalMessage()
+	mwscript.stopScript{script="CharGenJournalMessage"}
+end
+
+local function CharGenDagger()
+	mwscript.stopScript{script="CharGenDagger"}
+end
+
+local function CharGenDialogueMessage()
+	mwscript.stopScript{script="CharGenDialogueMessage"}
+end
+
+local function CharGenDoorEnterCaptain()
+	mwscript.stopScript{script="CharGenDoorEnterCaptain"}
+end
+
+--safety check for enabling stuff
+local function CharGenDoorExitCaptain()
+	common.enableControls()
+	common.enableMenus()
+	tes3.setGlobal("CharGenState", -1)
+	mwscript.stopScript{script="CharGenDoorExitCaptain"}
+end
+
+local function CharGenFatigueBarrel()
+	mwscript.stopScript{script="CharGenFatigueBarrel"}
+end
+
+--enabling anything still disabled
+local function CharGenStuffRoom()
+	common.enableControls()
+	common.enableMenus()
+	mwscript.stopScript{script="CharGenStuffRoom"}
 end
 
 function this.initializeFramework()
 	event.register("loaded", this.onLoaded)
 	mwse.overrideScript("CharGen", nukeDefaultChargen)
-	mwse.overrideScript("CharGenNameNPC", nukeDefaultJiubIntro)
-	mwse.overrideScript("CharGenCustomsDoor", nukeDefaultTrapdoor)
+	--mwse.overrideScript("CharGenNameNPC", nukeDefaultJiubIntro)
+	mwse.overrideScript("CharGenCustomsDoor", CharGenCustomsDoor)
+	mwse.overrideScript("CharGenJournalMessage", CharGenJournalMessage)
+	mwse.overrideScript("CharGenBed", CharGenBed)
+	mwse.overrideScript("CharGenDagger", CharGenDagger)
+	mwse.overrideScript("CharGenDialogueMessage", CharGenDialogueMessage)
+	mwse.overrideScript("CharGenDoorEnterCaptain", CharGenDoorEnterCaptain)
+	mwse.overrideScript("CharGenDoorExitCaptain", CharGenDoorExitCaptain)
+	mwse.overrideScript("CharGenFatigueBarrel", CharGenFatigueBarrel)
+	mwse.overrideScript("CharGenStuffRoom", CharGenStuffRoom)
 	if (debug) then tes3.messageBox("[CREL] initialized") end
 	mwse.log("[CREL] initialized")
 end

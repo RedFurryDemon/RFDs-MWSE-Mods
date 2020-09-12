@@ -45,12 +45,6 @@ local testSpells = {
 		["rapid regenerate"] = true,
 	}
 
---temporary function to move, get a better one
-
-local function testMove()
-	tes3.runLegacyScript{command = "coc Balmora"}
-end
-
 ------------------
 --STATS AND ATTRIBUTES TO 100, HMF TO 5000
 ------------------
@@ -64,7 +58,6 @@ local function setTestStats()
 			skill = skillNumber - 1,
 			current = 100
 		})
-		mwse.log("[CREL] modified skill: %.0f", skillNumber)
 	end
 
 	local attrTable = tes3.mobilePlayer.attributes
@@ -74,7 +67,6 @@ local function setTestStats()
 			attribute = attrNumber - 1,
 			current = 100
 		})
-		mwse.log("[CREL] modified attribute: %.0f", attrNumber)
 	end
 	
 	tes3.setStatistic({
@@ -101,15 +93,14 @@ end
 function this.chooseModeTest()
 	event.trigger("[CREL] mode chosen")
 	event.trigger("[CREL] test mode chosen")
-
-	tes3.messageBox("currently disabled")
-	--[[setTestStats()
+	--tes3.messageBox("currently disabled")
+	setTestStats()
+	tes3.player.baseObject.name = "Not Outlander" --I refuse to use anything else
 	common.addStartItems(testItems)
 	common.addStartSpells(testSpells)
-	common.enableControls()
-	common.enableMenus()
-	testMove()
-	mwse.log("[CREL] beginning set to test")]]
+	common.go(-23065, -15358, 593, 200, "Balmora")
+	common.setup()
+	mwse.log("[CREL] beginning set to test")
 end
 
 return this

@@ -5,16 +5,26 @@
 local this = {}
 
 --[[
+	wrapper for PositionCell for convenience
+	call like this: addStartSpells(mySpellTable)
+	parameter must be a table; entry structure: ["rapid regenerate"] = true,
+]]
+
+function this.go(xpos, ypos, zpos, zrot, destination)
+	mwscript.positionCell{reference = tes3.mobilePlayer, cell = destination, x = xpos, y = ypos, z = zpos, rotation = zrot}
+	tes3.messageBox("GONE")
+end
+
+--[[
 	this function iterates over spells in a table and adds them to the player when exiting chargen
 	call like this: addStartSpells(mySpellTable)
 	parameter must be a table; entry structure: ["rapid regenerate"] = true,
 ]]
 
-local spellTable = {}
 function this.addStartSpells(spellTable)
 	for addedSpell in pairs(spellTable) do
 		mwscript.addSpell{
-                reference = tes3.player, 
+                reference = tes3.player,
                 spell = addedSpell
 		}
 	end
@@ -27,47 +37,14 @@ end
 	the key is the item id, the value says how many of these items should be added
 ]]
 
-local itemTable = {}
 function this.addStartItems(itemTable)
 	for addedItem in pairs(itemTable) do
 		mwscript.addItem{
-                reference = tes3.player, 
+                reference = tes3.player,
                 item = addedItem,
                 count = itemTable[addedItem]
         	}
 	end
-end
-
---[[ (shamelessly stolen from Merlord)
-    Allows the creation of messageboxes using buttons that each have their own callback.
-    {
-        message = "Message",
-        buttons = [
-            { text = "Button text", callback = function }
-        ]
-    }
-]]
-
-function this.messageBox(params)
-    local message = params.message
-    local buttons = params.buttons
-    local function callback(e)
-        --get button from 0-indexed MW param
-        local button = buttons[e.button+1]
-        if button.callback then
-            button.callback()
-        end
-    end
-    --Make list of strings to insert into buttons
-    local buttonStrings = {}
-    for _, button in ipairs(buttons) do
-        table.insert(buttonStrings, button.text)
-    end
-    tes3.messageBox({
-        message = message,
-        buttons = buttonStrings,
-        callback = callback
-    })
 end
 
 ------------------
@@ -85,13 +62,6 @@ function this.disableControls()
 	tes3.runLegacyScript{command = "DisableVanityMode"}
 	tes3.runLegacyScript{command = "DisablePlayerFighting"}
 	tes3.runLegacyScript{command = "DisablePlayerMagic"}
-end
-
-function this.disableMenus()
-	tes3.runLegacyScript{command = "disableInventoryMenu"}
-	tes3.runLegacyScript{command = "disableMagicMenu"}
-	tes3.runLegacyScript{command = "disableMapMenu"}
-	tes3.runLegacyScript{command = "disableStatsMenu"}
 end
 
 function this.enableControls()
@@ -165,6 +135,17 @@ end
 
 local function nukeDefaultTrapdoor()
 	mwscript.stopScript{script="CharGenCustomsDoor"}
+end
+
+--[[
+	final stuff that need to be done in EVERY chargen to set up the game correctly
+]]
+
+function this.setup()
+	this.enableControls()
+	this.enableMenus()
+	mwscript.startScript({script = "RaceCheck"})
+	tes3.setGlobal("CharGenState", -1)
 end
 
 return this
