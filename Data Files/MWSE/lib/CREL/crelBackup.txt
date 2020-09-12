@@ -1,0 +1,11 @@
+local this = {}
+local debug = true
+
+
+
+function this.initializeFramework()
+	if (debug) then tes3.messageBox("[CREL] initialized") end
+	mwse.log("[CREL] initialized")
+end
+
+return this
