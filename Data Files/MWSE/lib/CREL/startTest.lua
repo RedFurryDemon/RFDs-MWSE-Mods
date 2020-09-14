@@ -93,12 +93,11 @@ end
 function this.chooseModeTest()
 	event.trigger("[CREL] mode chosen")
 	event.trigger("[CREL] test mode chosen")
-	--tes3.messageBox("currently disabled")
 	setTestStats()
 	tes3.player.baseObject.name = "Not Outlander" --I refuse to use anything else
 	common.addStartItems(testItems)
 	common.addStartSpells(testSpells)
-	common.go(-23065, -15358, 593, 200, "Balmora")
+	common.go(-22963, -15544, 516, 42, "Balmora")
 	common.setup()
 	mwse.log("[CREL] beginning set to test")
 end

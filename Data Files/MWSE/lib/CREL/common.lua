@@ -124,18 +124,7 @@ end
 --VANILLA SCRIPT NUKING
 ------------------
 
-local function nukeDefaultChargen()
---set CharGenState to 10
-	mwscript.stopScript{script="CharGen"}
-end
-
-local function nukeDefaultJiubIntro()
-	mwscript.stopScript{script="CharGenNameNPC"}
-end
-
-local function nukeDefaultTrapdoor()
-	mwscript.stopScript{script="CharGenCustomsDoor"}
-end
+--moved to crel.lua
 
 --[[
 	final stuff that need to be done in EVERY chargen to set up the game correctly

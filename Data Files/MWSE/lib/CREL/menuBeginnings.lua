@@ -1,84 +1,155 @@
 	--[[
-		Functions for creating menus, shared among chargen files.
+		Functions for creating alt start scenario menu.
 	]]
 
 local this = {}
 
-------------------
---NAME MENU
-------------------
-this.pcName = "" --for createMenuName
+local common = require("CREL.common")
 
-
---[[
-	this function creates the menu for typing player name
-	call like this: createMenuName(0.05, onNameSet, onNameTyped)
-	delay is a number (in seconds) to the next action; calledFunction is the function to call after the name is set; calledSetName is the function to use the typed text (most likely to set it as player name with setName, but you can use this to rename something else if you use a different function
-]]
-
-function this.createMenuName(delay, calledFunction)
---leaving this to Mer
-local menuID = tes3ui.registerID("crelNameMenu")
-	local function okayName()
-			tes3ui.leaveMenuMode(menuID)
-            tes3ui.findMenu(menuID):destroy()
-			timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-	end
-
-	local function enterName()
-		
-		local menu = tes3ui.createMenu{ id = menuID, fixedFrame = true }
-		menu.minWidth = 400
-		menu.alignX = 0.5
-		menu.alignY = 0
-		menu.autoHeight = true
-
-		mwse.mcm.createTextField(
-			menu,
-			{
-				label = "Name",
-				variable = mwse.mcm.createTableVariable{
-					id = "pcName", 
-					table = this
-					},
-				callback = okayName
-			})
-		tes3ui.enterMenuMode(menuID)
-		
-	end
-	enterName()
-	tes3.messageBox("name: %s", this.pcName)
+local function doStuff()
+tes3.messageBox("aaa")
+mwse.log("[CREL TEST] callback called")
 end
 
-------------------
---WRAPPER FOR BIRTHSIGN MENU
-------------------
+local startMenuID = tes3ui.registerID("crelStartMenu")
 
---[[
-	this function shows vanilla birthsign menu
-	call like this: createMenuBirthsign(0.05, onChosenBirthsign)
-	delay and calledFunction like in name functions
-]]
+this.beginningList = {}
+this.sortedBeginningList = {}
 
-function this.createMenuBirthsign(delay, calledFunction)
-	tes3.runLegacyScript{command = "EnableBirthMenu"}
+	---------------------FUNCTION: sort class list alphabetically
+
+local function sortBeginningList()
+    local sort_func = function(a, b)
+        return string.lower(a.title) < string.lower(b.title)
+    end
+
+    for _, beginning in pairs(this.beginningList) do
+        table.insert(this.sortedBeginningList, beginning)
+    end
+    table.sort(this.sortedBeginningList, sort_func)
+end
+
+function this.registerBeginnings(beginnings)
+	for  _, beginning in pairs(beginnings) do
+		table.insert(this.beginningList, beginning)
+	end
+	--sortBeginningList()
+end
+
+--local loc = beginning.locations.loc1
+
+function this.okayBeginning(beginning, loc, delay, calledFunction)
+mwse.log("[CREL TEST] okay called")
+	--[[if (beginning.disableItems ~= nil) and (beginning.disableItems == false) then
+		common.addStartItems(chosenItems)
+		common.addWater(1) --bottle count
+	end]]
+	common.addStartItems(beginning.items)
+mwse.log("[CREL TEST] items")
+	--[[if (beginning.disableSpells ~= nil) and (beginning.disableSpells == false) then
+		common.addStartSpells(chosenSpells)
+	end]]
+	common.addStartSpells(beginning.spells)
+mwse.log("[CREL TEST] spells")
+	common.go(loc[1], loc[2], loc[3], loc[4], loc[5])
+mwse.log("[CREL TEST] gone")
+	--tes3ui.leaveMenuMode(startMenuID)
+    --tes3ui.findMenu(startMenuID):destroy()
 	timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
 end
 
---[[ --test it!!!
-function this.createClickableList(option, optionTable, uiBlock, uiID, textVar)
-	for _, option in pairs(optionTable) do
-        local button = uiBlock:createTextSelect{ id = tes3ui.registerID(uiID), text = textVar }
-        button.autoHeight = true
-        button.layoutWidthFraction = 1.0
-        button.paddingAllSides = 2
-        button.borderAllSides = 2
-		button.borderRight = 0
-        button:register("mouseClick", function() clickedClass(class) end )
-    end
-end
-]]
+--function this.createBeginningMenu(delay, calledFunction)
+function this.createBeginningMenu()
+--this.okayBeginning(beginning, loc, 5, doStuff)
+	local startMenu = tes3ui.createMenu{ id = startMenuID, fixedFrame = true }
+	do
+		startMenu.minWidth = 400
+		--startMenu.alignX = 0.5
+		--startMenu.alignY = 0
+		startMenu.autoHeight = true
+	end
 
+	local outerBlock = startMenu:createBlock()
+	do
+		outerBlock.flowDirection = "top_to_bottom"
+		outerBlock.autoHeight = true
+		outerBlock.autoWidth = true
+		outerBlock.alignY = 0
+		outerBlock.alignX = 0.5
+		outerBlock.paddingAllSides = 6
+	end
+
+	local innerBlock = outerBlock:createThinBorder() --swap to block later
+	do
+		innerBlock.flowDirection = "left_to_right"
+		innerBlock.autoHeight = true
+		innerBlock.autoWidth = true
+		innerBlock.paddingAllSides = 0
+	end
+
+	local startListBlock = innerBlock:createVerticalScrollPane{ id = tes3ui.registerID("crelBeginningListBlock") }
+	do
+		startListBlock.flowDirection = "top-to-bottom"
+		startListBlock.layoutHeightFraction = 1.0
+		startListBlock.autoWidth = true
+		startListBlock.minWidth = 200
+		startListBlock.paddingAllSides = 3
+	end
+
+	    ---------------------MENU CONTENT: classes
+    for _, beginning in pairs(this.sortedBeginningList) do
+        local beginningButton = startListBlock:createTextSelect{ id = tes3ui.registerID("crelBeginningBlock"), text = beginning.title }
+        beginningButton.autoHeight = true
+        beginningButton.layoutWidthFraction = 1.0
+        beginningButton.paddingAllSides = 2
+        beginningButton.borderAllSides = 2
+		beginningButton.borderRight = 0
+        --beginningButton:register("mouseClick", function() clickedClass(class) end )
+    end
+
+	local rightBlock = innerBlock:createThinBorder{ id = tes3ui.registerID("crelBeginningRightBlock") }
+	do
+		rightBlock.flowDirection = "top_to_bottom"
+		rightBlock.autoHeight = true
+		rightBlock.autoWidth = true
+		--rightBlock.maxWidth = 350
+		rightBlock.paddingAllSides = 3
+	end
+
+	local descriptionBlock = rightBlock:createThinBorder()
+	do
+		descriptionBlock.autoHeight = true
+		descriptionBlock.minHeight = 160
+		descriptionBlock.maxHeight = 360
+		descriptionBlock.autoWidth = true
+		descriptionBlock.minWidth = 400
+		descriptionBlock.paddingAllSides = 10
+	end
+
+	local locationBlock = rightBlock:createVerticalScrollPane{ id = tes3ui.registerID("crelLocationListBlock") }
+	do
+		locationBlock.autoHeight = true
+		locationBlock.minHeight = 100
+		locationBlock.maxHeight = 200
+		locationBlock.autoWidth = true
+		locationBlock.minWidth = 400
+		locationBlock.paddingAllSides = 3
+	end
+
+	local buttonBlock = outerBlock:createThinBorder() --swap to block later
+	do
+		buttonBlock.flowDirection = "left_to_right"
+		buttonBlock.widthProportional = 1.0
+		--buttonBlock.autoHeight = true --later fix
+		buttonBlock.height = 30
+		buttonBlock.childAlignX = 1.0
+	end
+
+	tes3ui.enterMenuMode(startMenuID)
+	tes3.messageBox("it just works")
+end
+
+--[===[
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 --CLASSES
@@ -546,6 +617,9 @@ function this.createOptionsMenu()
 		title.borderBottom = 4
 	end
 
+local TR
+local PC
+
 	local factionMenu = mwse.mcm.createDropdown( outerOptionsBlock,
         {
             label = "Faction",
@@ -553,8 +627,8 @@ function this.createOptionsMenu()
                 { label = "NONE", value = nil},
                 { label = "Great House Redoran", value = "Redoran"},
                 { label = "Great House Hlaalu", value = "Hlaalu"},
-				{ label = "Great House Indoril", value = "T_Mw_HouseIndoril"},
-				{ label = "Great House Dres", value = "T_Mw_HouseDres"},
+				{ label = "Great House Indoril", value = "T_Mw_HouseIndoril", req = TR},
+				{ label = "Great House Dres", value = "T_Mw_HouseDres", req = TR},
 				{ label = "Great House Telvani", value = "Telvanni"},
 				{ label = "Great House Dagoth", value = "Sixth House"},
 				{ label = "Tribunal Temple", value = "Temple"},
@@ -572,18 +646,10 @@ function this.createOptionsMenu()
 				{ label = "Imperial Knights", value = "Imperial Knights"},
 				{ label = "Skaal", value = "Skaal"},
 				{ label = "Twin Lamps", value = "Twin Lamps"},
-				--{ label = "", value = ""},
-				{ label = "East Navy", value = "T_Mw_ImperialNavy"},
+				{ label = "East Navy", value = "T_Mw_ImperialNavy", req = TR},
 				{ label = "Imperial Archaeological Society", value = "T_Glb_ArchaeologicalSociety"},
-				--[[				{ label = "", value = ""},
-				{ label = "Niben Hierophants", value = "T_Cyr_NibenHierophants"},
-				{ label = "Imperial Curia", value = "T_Cyr_ImperialCuria"},
-								{ label = "", value = ""},
-				{ label = "", value = ""},
-				{ label = "", value = ""},
-								{ label = "", value = ""},
-				{ label = "", value = ""},
-				{ label = "", value = ""}]]
+				{ label = "Niben Hierophants", value = "T_Cyr_NibenHierophants", req = PC},
+				{ label = "Imperial Curia", value = "T_Cyr_ImperialCuria", req = PC}
             },
             variable = mwse.mcm.createTableVariable{
                 id = "pcFaction",
@@ -618,8 +684,17 @@ page:createDropdown{
 
 
 --[[
-local crelStart001 = {
-	title = "Arrived by boat",
+
+	]]
+
+
+
+
+
+
+--[[template
+local crelStartDefaultTavern = {
+	title = "Entering a city",
 	items = {},
 	spells = {},
 	blockItems = false, --
@@ -632,7 +707,8 @@ local crelStart001 = {
 		loc2 = {"", x, y, z, rotation},
 		},
 	callback = start001Function
-}
-	]]
+}]]
+
+]===]
 
 return this

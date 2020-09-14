@@ -1,5 +1,6 @@
 local this = {}
 local menus = require("CREL.menus")
+local menuB = require("CREL.menuBeginnings")
 
 local debug = true
 
@@ -11,7 +12,8 @@ tes3.player.baseObject.name = menus.pcName
 	if (debug) then tes3.messageBox("name: %s", menus.pcName) end
 	mwse.log("[CREL] custom mode - bbbbbbbbbbbbbbb")
 	--menus.createClassMenu()
-	menus.createOptionsMenu()
+	--menus.createOptionsMenu()
+	menuB.createBeginningMenu()
 end
 
 local function stageThreeDone()

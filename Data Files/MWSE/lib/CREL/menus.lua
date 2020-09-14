@@ -70,13 +70,17 @@ function this.createMenuName(delay, calledFunction)
 --leaving this to Mer
 local menuID = tes3ui.registerID("crelNameMenu")
 	local function okayName()
+		if (this.pcName == "") then
+			tes3.messageBox("You need to enter a name.")
+		else
 			tes3ui.leaveMenuMode(menuID)
             tes3ui.findMenu(menuID):destroy()
 			timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
+		end
 	end
 
 	local function enterName()
-		
+
 		local menu = tes3ui.createMenu{ id = menuID, fixedFrame = true }
 		menu.minWidth = 400
 		menu.alignX = 0.5
@@ -88,7 +92,7 @@ local menuID = tes3ui.registerID("crelNameMenu")
 			{
 				label = "Name",
 				variable = mwse.mcm.createTableVariable{
-					id = "pcName", 
+					id = "pcName",
 					table = this
 					},
 				callback = okayName
