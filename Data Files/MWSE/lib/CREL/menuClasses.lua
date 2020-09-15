@@ -1,89 +1,8 @@
 	--[[
-		Functions for creating menus, shared among chargen files.
+		Functions for creating class menu.
 	]]
 
 local this = {}
-
-------------------
---NAME MENU
-------------------
-this.pcName = "" --for createMenuName
-
-
---[[
-	this function creates the menu for typing player name
-	call like this: createMenuName(0.05, onNameSet, onNameTyped)
-	delay is a number (in seconds) to the next action; calledFunction is the function to call after the name is set; calledSetName is the function to use the typed text (most likely to set it as player name with setName, but you can use this to rename something else if you use a different function
-]]
-
-function this.createMenuName(delay, calledFunction)
---leaving this to Mer
-local menuID = tes3ui.registerID("crelNameMenu")
-	local function okayName()
-			tes3ui.leaveMenuMode(menuID)
-            tes3ui.findMenu(menuID):destroy()
-			timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-	end
-
-	local function enterName()
-		
-		local menu = tes3ui.createMenu{ id = menuID, fixedFrame = true }
-		menu.minWidth = 400
-		menu.alignX = 0.5
-		menu.alignY = 0
-		menu.autoHeight = true
-
-		mwse.mcm.createTextField(
-			menu,
-			{
-				label = "Name",
-				variable = mwse.mcm.createTableVariable{
-					id = "pcName", 
-					table = this
-					},
-				callback = okayName
-			})
-		tes3ui.enterMenuMode(menuID)
-		
-	end
-	enterName()
-	tes3.messageBox("name: %s", this.pcName)
-end
-
-------------------
---WRAPPER FOR BIRTHSIGN MENU
-------------------
-
---[[
-	this function shows vanilla birthsign menu
-	call like this: createMenuBirthsign(0.05, onChosenBirthsign)
-	delay and calledFunction like in name functions
-]]
-
-function this.createMenuBirthsign(delay, calledFunction)
-	tes3.runLegacyScript{command = "EnableBirthMenu"}
-	timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-end
-
---[[ --test it!!!
-function this.createClickableList(option, optionTable, uiBlock, uiID, textVar)
-	for _, option in pairs(optionTable) do
-        local button = uiBlock:createTextSelect{ id = tes3ui.registerID(uiID), text = textVar }
-        button.autoHeight = true
-        button.layoutWidthFraction = 1.0
-        button.paddingAllSides = 2
-        button.borderAllSides = 2
-		button.borderRight = 0
-        button:register("mouseClick", function() clickedClass(class) end )
-    end
-end
-]]
-
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
---CLASSES
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
 
 local classList = {}
 this.sortedClassList = {}
@@ -97,21 +16,35 @@ local data
 
 local classNameID = tes3ui.registerID("crelClassNameUI")
 
+local classMenuID = tes3ui.registerID("crelClassMenu")
+local classDescriptionID = tes3ui.registerID("crelClassDescriptionText")
+local classDescriptionHeaderID = tes3ui.registerID("crelClassDescrHeaderText")
+local classAttrHeaderID = tes3ui.registerID("crelClassAttrHeaderText")
+local classSpecHeaderID = tes3ui.registerID("crelClassSpecHeaderText")
+local classMajorHeaderID = tes3ui.registerID("crelClassMajorHeaderText")
+local classMinorHeaderID = tes3ui.registerID("crelClassMinorHeaderText")
+local majorSkillTextID = tes3ui.registerID("crelClassMajorSkillText")
+local minorSkillTextID = tes3ui.registerID("crelClassMinorSkillText")
+local rightBlockID = tes3ui.registerID("crelRightBlock")
+
+local classAttrTextID = tes3ui.registerID("crelClassAttrText")
+local classSpecTextID = tes3ui.registerID("crelClassSpecText")
+
 --------------------------------------------------------------------------------------------
 --CLASS-RELATED MISC FUNCTIONS
 --------------------------------------------------------------------------------------------
 
 --this function nukes class menu and sets PC class
 
---local pcClass
+local pcClass
 
 function this.setClass()
-	--local classMenuID = tes3ui.findMenu("crelClassMenu")
-    --tes3ui.findMenu(classMenuID):destroy()
+	tes3ui.findMenu(classMenuID):destroy()
     tes3ui.leaveMenuMode()
 	tes3.messageBox("class picked")
-	tes3.runLegacyScript{command = "coc Vivec"}
+	--tes3.runLegacyScript{command = "coc Vivec"}
 	--tes3.mobilePlayer.class = pcClass
+	tes3.player.baseObject.class = pcClass
 end
 --------------------------------------------------------------------------------------------
 
@@ -200,26 +133,9 @@ this.specHeader = ""
 
 --this function displays class data (description, skills, etc) after clicking on a class
 
-local classMenuID = tes3ui.registerID("crelClassMenu")
-local classDescriptionID = tes3ui.registerID("crelClassDescriptionText")
-local classDescriptionHeaderID = tes3ui.registerID("crelClassDescrHeaderText")
-local classAttrHeaderID = tes3ui.registerID("crelClassAttrHeaderText")
-local classSpecHeaderID = tes3ui.registerID("crelClassSpecHeaderText")
-local classMajorHeaderID = tes3ui.registerID("crelClassMajorHeaderText")
-local classMinorHeaderID = tes3ui.registerID("crelClassMinorHeaderText")
-local majorSkillTextID = tes3ui.registerID("crelClassMajorSkillText")
-local minorSkillTextID = tes3ui.registerID("crelClassMinorSkillText")
-local rightBlockID = tes3ui.registerID("crelRightBlock")
-
-local classAttrTextID = tes3ui.registerID("crelClassAttrText")
-local classSpecTextID = tes3ui.registerID("crelClassSpecText")
-
 local function clickedClass(class)
 
-	
-
-    --pcClass = class
-	--tes3.player.baseObject.class = class
+    pcClass = class
 
 	--check which specialization label should be displayed
 
@@ -231,6 +147,8 @@ local function clickedClass(class)
 	elseif (spec == 2) then
 		this.specText = "Stealth"
 	end
+
+	local rightBlock = tes3ui.findMenu(classMenuID):findChild(rightBlockID)
 
     local descrHeader = tes3ui.findMenu(classMenuID):findChild(classDescriptionHeaderID)
     descrHeader.text = class.name
@@ -244,12 +162,10 @@ local function clickedClass(class)
 	local specializationText = tes3ui.findMenu(classMenuID):findChild(classSpecTextID)
 	specializationText.text = this.specText
 
-	local rightBlock = tes3ui.findMenu(classMenuID):findChild(rightBlockID)
-
 	local classAttr1 = tes3.getAttributeName(class.attributes[1])
 	local classAttr2 = tes3.getAttributeName(class.attributes[2])
 	local attrText = tes3ui.findMenu(classMenuID):findChild(classAttrTextID)
-	attrText.text = string.format("%s and %s", classAttr1, classAttr2)
+	attrText.text = string.format("%s\n%s", classAttr1, classAttr2)
 
 	local majorSkillText = tes3ui.findMenu(classMenuID):findChild(majorSkillTextID)
 	local minorSkillText = tes3ui.findMenu(classMenuID):findChild(minorSkillTextID)
@@ -290,9 +206,9 @@ local function clickedClass(class)
 	local minorSkill4bonus = minorSkill4base + this.calcSkillBonus(class, class.minorSkills[4], 1)
 	local minorSkill5bonus = minorSkill5base + this.calcSkillBonus(class, class.minorSkills[5], 1)
 
-	majorSkillText.text = string.format("%s %.0f -> %.0f\n%s %.0f -> %.0f\n%s %.0f -> %.0f\n%s %.0f -> %.0f\n%s %.0f -> %.0f", majorSkill1, majorSkill1base, majorSkill1bonus, majorSkill2, majorSkill2base, majorSkill2bonus, majorSkill3, majorSkill3base, majorSkill3bonus, majorSkill4, majorSkill4base, majorSkill4bonus, majorSkill5, majorSkill5base, majorSkill5bonus)
-	minorSkillText.text = string.format("%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s %.0f -> %.0f\n%s %.0f -> %.0f", minorSkill1, minorSkill1base, minorSkill1bonus, minorSkill2, minorSkill2base, minorSkill2bonus, minorSkill3, minorSkill3base, minorSkill3bonus, minorSkill4, minorSkill4base, minorSkill4bonus, minorSkill5, minorSkill5base, minorSkill5bonus)
-    --rightBlock:updateLayout()
+	majorSkillText.text = string.format("%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)", majorSkill1, majorSkill1base, majorSkill1bonus, majorSkill2, majorSkill2base, majorSkill2bonus, majorSkill3, majorSkill3base, majorSkill3bonus, majorSkill4, majorSkill4base, majorSkill4bonus, majorSkill5, majorSkill5base, majorSkill5bonus)
+	minorSkillText.text = string.format("%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)", minorSkill1, minorSkill1base, minorSkill1bonus, minorSkill2, minorSkill2base, minorSkill2bonus, minorSkill3, minorSkill3base, minorSkill3bonus, minorSkill4, minorSkill4base, minorSkill4bonus, minorSkill5, minorSkill5base, minorSkill5bonus)
+    rightBlock:updateLayout()
 end
     --[[if backgroundsList[data.currentBackground].checkDisabled and backgroundsList[data.currentBackground].checkDisabled() then 
         header.color = tes3ui.getPalette("disabled_color")
@@ -390,7 +306,7 @@ function this.createClassMenu()
 
 	---------------------MENU BLOCK: class info
 
-	local rightBlock = innerBlock:createBlock()
+	local rightBlock = innerBlock:createBlock{ id = rightBlockID }
 
     do
 		rightBlock.autoWidth = true
@@ -435,6 +351,7 @@ function this.createClassMenu()
 
     local classSpecBlock = classInfoBlock:createThinBorder()
 	do
+		classSpecBlock.flowDirection = "top_to_bottom"
 		classSpecBlock.autoHeight = true
 		classSpecBlock.width = 400
 		classSpecBlock.paddingAllSides = 10
@@ -448,6 +365,7 @@ function this.createClassMenu()
 
 	local classAttrBlock = classInfoBlock:createThinBorder()
 	do
+		classAttrBlock.flowDirection = "top_to_bottom"
 		classAttrBlock.autoHeight = true
 		classAttrBlock.width = 400
 		classAttrBlock.paddingAllSides = 10
@@ -465,8 +383,8 @@ function this.createClassMenu()
 
     do
         skillBlock = rightBlock:createBlock()
-		skillBlock.autoWidth = true
-		skillBlock.autoHeight = true
+		skillBlock.width = 400
+		skillBlock.height = 140
         skillBlock.flowDirection = "left_to_right"
         skillBlock.paddingAllSides = 0
 		skillBlock.paddingTop = 6
@@ -589,44 +507,5 @@ function this.createOptionsMenu()
 	tes3ui.enterMenuMode(optionsMenuID)
 
 end
-
-
---[[
-page:createDropdown{
-	label = "Cell lighting value override presets. The override values are read from overrides.lua, and can be different for each cell.",
-	options = {
-		{ label = "NONE", value = nil},
-		{ label = "True Lights and Darkness", value = "TLaD"},
-		{ label = "di.Still.ed Lights", value = "DL"},
-	},
-	variable = mwse.mcm.createTableVariable{
-            id = "useOverrides",
-            table = config
-        }
-	}]]
-
-
-
-
-
-
-
---[[
-local crelStart001 = {
-	title = "Arrived by boat",
-	items = {},
-	spells = {},
-	blockItems = false, --
-	blockSpells = false,
-	dependencies = {}, --mods needed for this
-	requirements = {}, -- player faction/race/etc.
-	locations = {
-		loc1 = {"", x, y, z, rotation},
-		loc2 = {"", x, y, z, rotation},
-		loc2 = {"", x, y, z, rotation},
-		},
-	callback = start001Function
-}
-	]]
 
 return this

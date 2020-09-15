@@ -12,9 +12,13 @@ mwse.log("[CREL TEST] callback called")
 end
 
 local startMenuID = tes3ui.registerID("crelStartMenu")
+local locationBlockID = tes3ui.registerID("crelLocationListBlock")
 
 this.beginningList = {}
 this.sortedBeginningList = {}
+
+this.locationList = {}
+this.sortedLocationList = {}
 
 	---------------------FUNCTION: sort class list alphabetically
 
@@ -33,7 +37,7 @@ function this.registerBeginnings(beginnings)
 	for  _, beginning in pairs(beginnings) do
 		table.insert(this.beginningList, beginning)
 	end
-	--sortBeginningList()
+	sortBeginningList()
 end
 
 --local loc = beginning.locations.loc1
@@ -58,14 +62,42 @@ mwse.log("[CREL TEST] gone")
 	timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
 end
 
+local function clickedLocation(location)
+	tes3.messageBox("location")
+end
+
+local function clickedBeginning(beginning)
+	this.locationList = {} --clear the list?
+	local locationBlock = tes3ui.findMenu(startMenuID):findChild(locationBlockID)
+	for  _, location in pairs(beginning.locations) do
+		table.insert(this.locationList, location)
+	end
+    local sort_func = function(a, b)
+        return string.lower(a[6] or a[5]) < string.lower(b[6] or b[5]) --title or cell name
+    end
+    for _, location in pairs(this.locationList) do
+        table.insert(this.sortedlocationList, location)
+    end
+    table.sort(this.sortedlocationList, sort_func)
+
+	---------------------MENU CONTENT: locations
+    for _, location in pairs(this.sortedLocationList) do
+        local locButton = locationBlock:createTextSelect{ id = tes3ui.registerID("crelLocBlock"), text = location[6] or location[5] }
+        locButton.autoHeight = true
+        locButton.layoutWidthFraction = 1.0
+        locButton.paddingAllSides = 2
+        locButton.borderAllSides = 2
+		locButton.borderRight = 0
+        locButton:register("mouseClick", function() clickedLocation(location) end )
+    end
+end
+
 --function this.createBeginningMenu(delay, calledFunction)
 function this.createBeginningMenu()
 --this.okayBeginning(beginning, loc, 5, doStuff)
 	local startMenu = tes3ui.createMenu{ id = startMenuID, fixedFrame = true }
 	do
 		startMenu.minWidth = 400
-		--startMenu.alignX = 0.5
-		--startMenu.alignY = 0
 		startMenu.autoHeight = true
 	end
 
@@ -104,7 +136,7 @@ function this.createBeginningMenu()
         beginningButton.paddingAllSides = 2
         beginningButton.borderAllSides = 2
 		beginningButton.borderRight = 0
-        --beginningButton:register("mouseClick", function() clickedClass(class) end )
+        beginningButton:register("mouseClick", function() clickedBeginning(beginning) end )
     end
 
 	local rightBlock = innerBlock:createThinBorder{ id = tes3ui.registerID("crelBeginningRightBlock") }
@@ -126,7 +158,7 @@ function this.createBeginningMenu()
 		descriptionBlock.paddingAllSides = 10
 	end
 
-	local locationBlock = rightBlock:createVerticalScrollPane{ id = tes3ui.registerID("crelLocationListBlock") }
+	local locationBlock = rightBlock:createVerticalScrollPane{ id = locationBlockID }
 	do
 		locationBlock.autoHeight = true
 		locationBlock.minHeight = 100
