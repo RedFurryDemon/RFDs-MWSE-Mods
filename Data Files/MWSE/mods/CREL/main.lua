@@ -7,6 +7,24 @@ local defaultItemSet = {
 	["ingred_bread_01"] = 2
 }
 
+--[[
+local crelStart001 = {
+	title = "Arrived by boat",
+	items = {},
+	spells = {},
+	blockItems = false,
+	blockSpells = false,
+	dependencies = {}, --mods needed for this
+	requirements = {}, -- player faction/race/etc.
+	locations = {
+		loc1 = {"", x, y, z, rotation},
+		loc2 = {"", x, y, z, rotation},
+		loc2 = {"", x, y, z, rotation},
+		},
+	callback = start001Function
+}
+	]]
+
 local crelStartDefaultBoat = {
 	id = "crelStartDefaultBoat",
 	title = "Arrived by boat",
@@ -47,7 +65,9 @@ local defaultBeginnings = {
 
 local function onInitialized()
 	crel.initializeFramework()
-	event.register("[CREL] custom mode chosen", crel.registerBeginnings(defaultBeginnings))
+	event.register("[CREL] custom mode chosen", function ()
+    	crel.registerBeginnings(defaultBeginnings)
+	end)
 end
 
 event.register("initialized", onInitialized)

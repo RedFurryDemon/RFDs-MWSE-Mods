@@ -94,6 +94,7 @@ end
 
 --function this.createBeginningMenu(delay, calledFunction)
 function this.createBeginningMenu()
+	tes3.messageBox("well I fucked up the sorting function, apparently")
 --this.okayBeginning(beginning, loc, 5, doStuff)
 	local startMenu = tes3ui.createMenu{ id = startMenuID, fixedFrame = true }
 	do

@@ -4,6 +4,8 @@
 
 local this = {}
 
+local menuB = require("CREL.menuBeginnings") --temporary
+
 local classList = {}
 this.sortedClassList = {}
 
@@ -41,10 +43,11 @@ local pcClass
 function this.setClass()
 	tes3ui.findMenu(classMenuID):destroy()
     tes3ui.leaveMenuMode()
-	tes3.messageBox("class picked")
+	tes3.messageBox("class picked but DOESN'T WORK YET")
+	menuB.createBeginningMenu()
 	--tes3.runLegacyScript{command = "coc Vivec"}
 	--tes3.mobilePlayer.class = pcClass
-	tes3.player.baseObject.class = pcClass
+	--tes3.player.baseObject.class = pcClass
 end
 --------------------------------------------------------------------------------------------
 
@@ -208,7 +211,7 @@ local function clickedClass(class)
 
 	majorSkillText.text = string.format("%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)", majorSkill1, majorSkill1base, majorSkill1bonus, majorSkill2, majorSkill2base, majorSkill2bonus, majorSkill3, majorSkill3base, majorSkill3bonus, majorSkill4, majorSkill4base, majorSkill4bonus, majorSkill5, majorSkill5base, majorSkill5bonus)
 	minorSkillText.text = string.format("%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)\n%s (%.0f -> %.0f)", minorSkill1, minorSkill1base, minorSkill1bonus, minorSkill2, minorSkill2base, minorSkill2bonus, minorSkill3, minorSkill3base, minorSkill3bonus, minorSkill4, minorSkill4base, minorSkill4bonus, minorSkill5, minorSkill5base, minorSkill5bonus)
-    rightBlock:updateLayout()
+    --rightBlock:updateLayout()
 end
     --[[if backgroundsList[data.currentBackground].checkDisabled and backgroundsList[data.currentBackground].checkDisabled() then 
         header.color = tes3ui.getPalette("disabled_color")
@@ -392,8 +395,8 @@ function this.createClassMenu()
 
     local classMajorSkillBlock = skillBlock:createThinBorder()
 	do
-		classMajorSkillBlock.height = 140
-		classMajorSkillBlock.width = 127
+		classMajorSkillBlock.height = 120
+		classMajorSkillBlock.widthProportional = 1.0
 		classMajorSkillBlock.paddingAllSides = 10
 		classMajorSkillBlock.borderRight = 3
 		classMajorSkillBlock:createLabel{id = majorSkillTextID, text = ""}
@@ -402,7 +405,7 @@ function this.createClassMenu()
 	local classMinorSkillBlock = skillBlock:createThinBorder()
 	do
 		classMinorSkillBlock.height = 120
-		classMinorSkillBlock.width = 197
+		classMinorSkillBlock.widthProportional = 1.0
 		classMinorSkillBlock.paddingAllSides = 10
 		classMinorSkillBlock.borderLeft = 3
 		classMinorSkillBlock:createLabel{id = minorSkillTextID, text = ""}
@@ -429,7 +432,7 @@ function this.createClassMenu()
 
 	---------------------MENU BLOCK: okay button
 
-    okayButton = buttonBlock:createButton{ id = tes3ui.registerID("perkOkayButton"), text = tes3.findGMST(tes3.gmst.sOK).value }
+    okayButton = buttonBlock:createButton{ id = tes3ui.registerID("classOkayButton"), text = tes3.findGMST(tes3.gmst.sOK).value }
     	okayButton.alignX = 1.0
     	okayButton:register("mouseClick", this.setClass)
 

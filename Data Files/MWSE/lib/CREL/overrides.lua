@@ -1,4 +1,5 @@
 local this = {}
+local common = require("CREL.common")
 
 local function nukeDefaultChargen()
 --set CharGenState to 10
