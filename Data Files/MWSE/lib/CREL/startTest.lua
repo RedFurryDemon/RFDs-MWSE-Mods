@@ -68,7 +68,7 @@ local function setTestStats()
 			current = 100
 		})
 	end
-	
+
 	tes3.setStatistic({
 		reference = tes3.mobilePlayer,
 		name = "health",
@@ -94,11 +94,20 @@ function this.chooseModeTest()
 	event.trigger("[CREL] mode chosen")
 	event.trigger("[CREL] test mode chosen")
 	setTestStats()
+
+	--[[local pcHead = tes3.getObject("b_n_dark_elf_m_head_05")
+	local pcHair = tes3.getObject("b_n_dark_elf_m_hair_25")
+	tes3.player.baseObject.head = pcHead
+	tes3.player.baseObject.hair = pcHair
+	tes3.player.bodyPartManager:updateForReference(tes3.player)]]
 	tes3.player.baseObject.name = "Not Outlander" --I refuse to use anything else
+
 	common.addStartItems(testItems)
 	common.addStartSpells(testSpells)
 	common.go(-22963, -15544, 516, 42, "Balmora")
-	common.setup()
+
+	timer.start{ duration = 0.2, type = timer.simulate, callback = common.setup }
+
 	mwse.log("[CREL] beginning set to test")
 end
 

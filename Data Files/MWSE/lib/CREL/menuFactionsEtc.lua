@@ -4,87 +4,6 @@
 
 local this = {}
 
-------------------
---NAME MENU
-------------------
-this.pcName = "" --for createMenuName
-
-
---[[
-	this function creates the menu for typing player name
-	call like this: createMenuName(0.05, onNameSet, onNameTyped)
-	delay is a number (in seconds) to the next action; calledFunction is the function to call after the name is set; calledSetName is the function to use the typed text (most likely to set it as player name with setName, but you can use this to rename something else if you use a different function
-]]
-
-function this.createMenuName(delay, calledFunction)
---leaving this to Mer
-local menuID = tes3ui.registerID("crelNameMenu")
-	local function okayName()
-			tes3ui.leaveMenuMode(menuID)
-            tes3ui.findMenu(menuID):destroy()
-			timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-	end
-
-	local function enterName()
-		
-		local menu = tes3ui.createMenu{ id = menuID, fixedFrame = true }
-		menu.minWidth = 400
-		menu.alignX = 0.5
-		menu.alignY = 0
-		menu.autoHeight = true
-
-		mwse.mcm.createTextField(
-			menu,
-			{
-				label = "Name",
-				variable = mwse.mcm.createTableVariable{
-					id = "pcName", 
-					table = this
-					},
-				callback = okayName
-			})
-		tes3ui.enterMenuMode(menuID)
-		
-	end
-	enterName()
-	tes3.messageBox("name: %s", this.pcName)
-end
-
-------------------
---WRAPPER FOR BIRTHSIGN MENU
-------------------
-
---[[
-	this function shows vanilla birthsign menu
-	call like this: createMenuBirthsign(0.05, onChosenBirthsign)
-	delay and calledFunction like in name functions
-]]
-
-function this.createMenuBirthsign(delay, calledFunction)
-	tes3.runLegacyScript{command = "EnableBirthMenu"}
-	timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-end
-
---[[ --test it!!!
-function this.createClickableList(option, optionTable, uiBlock, uiID, textVar)
-	for _, option in pairs(optionTable) do
-        local button = uiBlock:createTextSelect{ id = tes3ui.registerID(uiID), text = textVar }
-        button.autoHeight = true
-        button.layoutWidthFraction = 1.0
-        button.paddingAllSides = 2
-        button.borderAllSides = 2
-		button.borderRight = 0
-        button:register("mouseClick", function() clickedClass(class) end )
-    end
-end
-]]
-
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
---CLASSES
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-
 local classList = {}
 this.sortedClassList = {}
 
@@ -610,10 +529,6 @@ page:createDropdown{
             table = config
         }
 	}]]
-
-
-
-
 
 
 

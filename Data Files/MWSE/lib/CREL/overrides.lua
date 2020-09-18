@@ -1,8 +1,6 @@
 local this = {}
-local common = require("CREL.common")
 
 local function nukeDefaultChargen()
---set CharGenState to 10
 	mwscript.stopScript{script="CharGen"}
 end
 
@@ -34,11 +32,7 @@ local function CharGenDoorEnterCaptain()
 	mwscript.stopScript{script="CharGenDoorEnterCaptain"}
 end
 
---safety check for enabling stuff
 local function CharGenDoorExitCaptain()
-	common.enableControls()
-	common.enableMenus()
-	tes3.setGlobal("CharGenState", -1)
 	mwscript.stopScript{script="CharGenDoorExitCaptain"}
 end
 
@@ -82,25 +76,22 @@ local function CharGenBoatNPC()
 	mwscript.stopScript{script="CharGenBoatNPC"}
 end
 
---enabling anything still disabled
 local function CharGenStuffRoom()
-	common.enableControls()
-	common.enableMenus()
 	mwscript.stopScript{script="CharGenStuffRoom"}
 end
 
 function this.overrideScripts()
 	mwse.overrideScript("CharGen", nukeDefaultChargen)
-	mwse.overrideScript("CharGenNameNPC", nukeDefaultJiubIntro) --remember to override
-	mwse.overrideScript("CharGen_ring_keley", CharGen_ring_keley) --remember to override
-	mwse.overrideScript("CharGenBoatNPC", CharGenBoatNPC) --remember to override
-	mwse.overrideScript("CharGenBoatWomen", CharGenBoatWomen) --remember to override
-	mwse.overrideScript("CharGenClassNPC", CharGenClassNPC) --remember to override
-	mwse.overrideScript("CharGenDoorExit", CharGenDoorExit) --remember to override
-	mwse.overrideScript("CharGenDoorGuardTalker", CharGenDoorGuardTalker) --remember to override
-	mwse.overrideScript("CharGenRaceNPC", CharGenRaceNPC) --remember to override
-	mwse.overrideScript("CharGenStatsSheet", CharGenStatsSheet) --remember to override
-	mwse.overrideScript("CharGenWalkNPC", CharGenWalkNPC) --remember to override
+	mwse.overrideScript("CharGenNameNPC", nukeDefaultJiubIntro)
+	mwse.overrideScript("CharGen_ring_keley", CharGen_ring_keley)
+	mwse.overrideScript("CharGenBoatNPC", CharGenBoatNPC)
+	mwse.overrideScript("CharGenBoatWomen", CharGenBoatWomen)
+	mwse.overrideScript("CharGenClassNPC", CharGenClassNPC)
+	mwse.overrideScript("CharGenDoorExit", CharGenDoorExit)
+	mwse.overrideScript("CharGenDoorGuardTalker", CharGenDoorGuardTalker)
+	mwse.overrideScript("CharGenRaceNPC", CharGenRaceNPC)
+	mwse.overrideScript("CharGenStatsSheet", CharGenStatsSheet)
+	mwse.overrideScript("CharGenWalkNPC", CharGenWalkNPC)
 	mwse.overrideScript("CharGenCustomsDoor", CharGenCustomsDoor)
 	mwse.overrideScript("CharGenJournalMessage", CharGenJournalMessage)
 	mwse.overrideScript("CharGenBed", CharGenBed)

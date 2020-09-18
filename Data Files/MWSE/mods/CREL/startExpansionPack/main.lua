@@ -283,11 +283,25 @@ local factionBeginnings = {
 	crelStartFactionMGDwemer
 }
 
+--debug!
+
+local function upd()
+	tes3.messageBox("UPDATED")
+	mwse.log("UPDATED")
+end
+
+local function ass()
+	tes3.messageBox("ASSIGNED")
+	mwse.log("ASSIGNED")
+end
+
 local function onInitialized()
+event.register("bodyPartsUpdated", upd)
+event.register("bodyPartsAssigned", ass)
 	event.register("[CREL] custom mode chosen", function ()
     	crel.registerBeginnings(survivalBeginnings)
 		crel.registerBeginnings(factionBeginnings)
 	end)
 end
 
-event.register("initialized", onInitialized)
+--event.register("initialized", onInitialized)

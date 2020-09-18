@@ -42,7 +42,7 @@ end
 --uiID is the ID of the created list
 --textVar is what is used to get the button text from
 
---[[function this.createClickableList(option, optionTable, uiBlock, uiID, textVar, callback)
+function this.createClickableList(option, optionTable, uiBlock, uiID, textVar, callback)
 	for _, option in pairs(optionTable) do
         local button = uiBlock:createTextSelect{ id = tes3ui.registerID(uiID), text = textVar }
         button.autoHeight = true
@@ -52,18 +52,43 @@ end
 		button.borderRight = 0
         button:register("mouseClick", function() callback(option) end )
     end
-end]]
+end
+
+--[[ (also shamelessly stolen from Merlord, but reworked to be more versatile)
+    Sorts a table alphabetically.
+    For notes, see the comments inside the function.
+]]
+
+function this.createSortedList(val, unsortedList, sortedList)
+    local sort_func = function(a, b)
+        -->examples of val: name, or id, or any valid field wth a string
+		return string.lower(a[val]) < string.lower(b[val])
+    end
+
+	-->unsortedList example: classList
+    for _, element in pairs(unsortedList) do
+		-->sortedList example: this.sortedClassList
+        table.insert(sortedList, element)
+    end
+    table.sort(sortedList, sort_func)
+
+	return sortedList
+end
 
 
 ------------------
 --NAME MENU
 ------------------
-this.pcName = "" --for createMenuName
+this.pcName = ""
+
+function this.setName()
+	tes3.mobileplayer.name = this.pcName
+end
 
 --[[
 	this function creates the menu for typing player name
 	call like this: createMenuName(0.05, onNameSet, onNameTyped)
-	delay is a number (in seconds) to the next action; calledFunction is the function to call after the name is set; calledSetName is the function to use the typed text (most likely to set it as player name with setName, but you can use this to rename something else if you use a different function
+	delay is a number (in seconds) to the next action; calledFunction is the function to call after the name is set; setName is the function to use the typed text (most likely to set it as player name with setName, but you can use this to rename something else if you use a different function
 ]]
 
 function this.createMenuName(delay, calledFunction)
@@ -98,7 +123,7 @@ local menuID = tes3ui.registerID("crelNameMenu")
 				callback = okayName
 			})
 		tes3ui.enterMenuMode(menuID)
-		
+
 	end
 	enterName()
 	tes3.messageBox("name: %s", this.pcName)

@@ -6,13 +6,11 @@ local this = {}
 
 --[[
 	wrapper for PositionCell for convenience
-	call like this: addStartSpells(mySpellTable)
-	parameter must be a table; entry structure: ["rapid regenerate"] = true,
 ]]
 
 function this.go(xpos, ypos, zpos, zrot, destination)
 	mwscript.positionCell{reference = tes3.mobilePlayer, cell = destination, x = xpos, y = ypos, z = zpos, rotation = zrot}
-	tes3.messageBox("GONE")
+	tes3.messageBox("done") --debug, remove later
 end
 
 --[[
@@ -55,82 +53,41 @@ function this.toggleScripts()
 	tes3.runLegacyScript{command = "ToggleScripts"}
 end
 
+local function setControls(state)
+	local player = tes3.mobilePlayer
+    player.controlsDisabled = state
+    player.jumpingDisabled = state
+    player.viewSwitchDisabled = state
+    player.vanityDisabled = state
+    player.attackDisabled = state
+    player.magicDisabled = state
+end
+
 function this.disableControls()
-	tes3.runLegacyScript{command = "DisablePlayerControls"}
-	tes3.runLegacyScript{command = "DisablePlayerJumping"}
-	tes3.runLegacyScript{command = "DisablePlayerViewSwitch"}
-	tes3.runLegacyScript{command = "DisableVanityMode"}
-	tes3.runLegacyScript{command = "DisablePlayerFighting"}
-	tes3.runLegacyScript{command = "DisablePlayerMagic"}
+	setControls(true)
 end
 
 function this.enableControls()
-	tes3.runLegacyScript{command = "EnablePlayerViewSwitch"}
-	tes3.runLegacyScript{command = "EnablePlayerControls"}
-	tes3.runLegacyScript{command = "EnablePlayerLooking"}
-	tes3.runLegacyScript{command = "EnablePlayerFighting"}
-	tes3.runLegacyScript{command = "EnablePlayerJumping"}
-	tes3.runLegacyScript{command = "EnablePlayerMagic"}
-	tes3.runLegacyScript{command = "EnableInventoryMenu"}
+	setControls(false)
+	tes3.messageBox("controls enabled")
 end
 
 function this.enableMenus()
-	tes3.runLegacyScript{command = "EnableStatsMenu"}
-	tes3.runLegacyScript{command = "EnableMagicMenu"}
-	tes3.runLegacyScript{command = "EnableInventoryMenu"}
-	tes3.runLegacyScript{command = "EnableMapMenu"}
+	local menuController = tes3.worldController.menuController
+    menuController.statsMenuEnabled = true
+    menuController.magicMenuEnabled = true
+    menuController.inventoryMenuEnabled = true
+    menuController.mapMenuEnabled = true
+	tes3.messageBox("menus enabled")
 end
 
-function this.testMove()
-	tes3.runLegacyScript{command = "coc Balmora"}
-end
-
-
-local pcName
-
-function this.setName()
-	tes3.mobileplayer.name = pcName
-end
-
-function this.customMenuName()
-	--tes3.runLegacyScript{command = "EnableNameMenu"}
-local menuID = tes3ui.registerID("crelNameMenu")
-                local menu = tes3ui.createMenu{ id = menuID, fixedFrame = true }
-                menu.minWidth = 400
-                menu.alignX = 0.5
-                menu.alignY = 0
-                menu.autoHeight = true
-               -- menu.widthProportional = 1
-                --menu.heightProportional = 1
-                mwse.mcm.createTextField(
-                    menu,
-                    {
-                        label = "Name",
-                        variable = pcName,
-                        callback = setName
-                    }
-                )
-                tes3ui.enterMenuMode(menuID)
-				timer.start{ duration = 0.05, type = timer.simulate, callback = enableAll }
-end
-
-
-function this.menuBirthsign(delay, calledFunction)
-	tes3.runLegacyScript{command = "EnableBirthMenu"}
-	timer.start{ duration = delay, type = timer.simulate, callback = calledFunction }
-end
-
-------------------
---VANILLA SCRIPT NUKING
-------------------
-
---moved to crel.lua
 
 --[[
 	final stuff that need to be done in EVERY chargen to set up the game correctly
 ]]
 
 function this.setup()
+	--enabling functions may be used multiple times, it's not necessary but won't cause a problem
 	this.enableControls()
 	this.enableMenus()
 	mwscript.startScript({script = "RaceCheck"})

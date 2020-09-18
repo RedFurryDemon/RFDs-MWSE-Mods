@@ -8,7 +8,21 @@ local defaultItemSet = {
 }
 
 --[[
+	mandatory fields:
 local crelStart001 = {
+	id = crelStart001,
+	title = "Arrived by boat",
+	locations = {
+		loc1 = {
+			locData = {"", x, y, z, rotation},
+		}
+	},
+}
+	]]
+
+--[[
+local crelStart001 = {
+	id = crelStart001,
 	title = "Arrived by boat",
 	items = {},
 	spells = {},
@@ -17,10 +31,15 @@ local crelStart001 = {
 	dependencies = {}, --mods needed for this
 	requirements = {}, -- player faction/race/etc.
 	locations = {
-		loc1 = {"", x, y, z, rotation},
+		loc1 = {
+			locData = {"", x, y, z, rotation},
+			name = "Vivec",
+			dependencies = {},
+			items = {}
+		}
 		loc2 = {"", x, y, z, rotation},
 		loc2 = {"", x, y, z, rotation},
-		},
+	},
 	callback = start001Function
 }
 	]]
@@ -30,9 +49,13 @@ local crelStartDefaultBoat = {
 	title = "Arrived by boat",
 	items = defaultItemSet,
 	locations = {
-		loc1 = {-9029, -73010, 103, -44, "Seyda Neen"},
-		loc2 = {-69216, 141779, 222, -176, "Khuul"},
+		loc1 = {
+			locData = {-9029, -73010, 103, -44, "Seyda Neen"},
 		},
+		loc2 = {
+			locData = {-69216, 141779, 222, -176, "Khuul"},
+		}
+	},
 }
 
 local crelStartDefaultCity = {
@@ -40,10 +63,16 @@ local crelStartDefaultCity = {
 	title = "Entering a city",
 	items = defaultItemSet,
 	locations = {
-		loc1 = {30292, -74390, 543, -159, "Vivec, Foreign Quarter"},
-		loc2 = {-18751, 52268, 1632, 73, "Ald-ruhn"},
-		loc3 = {-22296, -18947, 369, -13, "Balmora"},
+		loc1 = {
+			locData = {30292, -74390, 543, -159, "Vivec, Foreign Quarter"},
 		},
+		loc2 = {
+			locData = {-18751, 52268, 1632, 73, "Ald-ruhn"},
+		},
+		loc3 = {
+			locData = {-22296, -18947, 369, -13, "Balmora"},
+		},
+	},
 }
 
 local crelStartDefaultTavern = {
@@ -51,16 +80,22 @@ local crelStartDefaultTavern = {
 	title = "Resting in a tavern",
 	items = defaultItemSet,
 	locations = {
-		loc1 = {501, 824, -239, -41, "Balmora, Eight Plates"},
-		loc2 = {-115, -1207, -488, 78, "Ald-ruhn, Ald Skar Inn"},
-		loc3 = {210, 521, 12, -168, "Ebonheart, Six Fishes"},
+		loc1 = {
+			locData = {501, 824, -239, -41, "Balmora, Eight Plates"},
 		},
+		loc2 = {
+			locData = {-115, -1207, -488, 78, "Ald-ruhn, Ald Skar Inn"},
+		},
+		loc3 = {
+			locData = {210, 521, 12, -168, "Ebonheart, Six Fishes"},
+		},
+	},
 }
 
 local defaultBeginnings = {
 	crelStartDefaultBoat,
 	crelStartDefaultCity,
-	crelStartDefaultTavern
+	crelStartDefaultTavern,
 }
 
 local function onInitialized()

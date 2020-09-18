@@ -3,6 +3,22 @@ local menus = require("CREL.menus")
 local menuB = require("CREL.menuBeginnings")
 local menuC = require("CREL.menuClasses")
 
+--local ccng = include("Aleist3r.Character Creation Name Generator.MenuNameGenerator")
+
+--yes I am keeping this HERE because otherwise I'd probably forget
+--[[
+	local gh_interop = include("graphicHerbalism.interop")
+function gh_interop.getFailureString(container)
+  return string.format("whatever custom failure text %s", container)
+end
+
+
+local gh_config = include("graphicHerbalism.config")
+if gh_config then
+  gh_config.blacklist["my object id"] = true
+end]]
+
+
 local debug = true
 
 --the logging functions are used to assess chargen state and prevent overlapping
@@ -22,6 +38,7 @@ local function stageThreeDone()
 	mwse.log("[CREL] custom mode - AAAAAAAAAAAAAA set")
 	--menus.createClassMenu()
 	menus.createMenuName(0.1, nameisset)
+	--ccng.showNameGenerationMenu()
 end
 
 --[[local function customMenuClass()

@@ -4,6 +4,7 @@
 
 local this = {}
 
+local menus = require("CREL.menus")
 local menuB = require("CREL.menuBeginnings") --temporary
 
 local classList = {}
@@ -56,7 +57,7 @@ end
 
 local function getClasses()
     --local temp = {}
-    --local classes = tes3.dataHandler.nonDynamicData.classes
+    --this.classList = tes3.dataHandler.nonDynamicData.classes
 	--local classTable = {}
 
 	--local t = {}
@@ -70,7 +71,6 @@ local function getClasses()
             end
         end
     end
-	table.sort(classList)
 	tes3.messageBox("classlist done")
 end
 --------------------------------------------------------------------------------------------
@@ -263,16 +263,18 @@ function this.createClassMenu()
 		classListBlock.paddingAllSides = 4
 		classListBlock.borderRight = 6
 
+--call sorting function here
 	---------------------FUNCTION: sort class list alphabetically
 
-    local sort_func = function(a, b)
+	this.sortedClassList = menus.createSortedList("name", classList, this.sortedClassList)
+    --[[local sort_func = function(a, b)
         return string.lower(a.name) < string.lower(b.name)
     end
 
     for _, class in pairs(classList) do
         table.insert(this.sortedClassList, class)
     end
-    table.sort(this.sortedClassList, sort_func)
+    table.sort(this.sortedClassList, sort_func)]]
 
     --Default "No background" button
     

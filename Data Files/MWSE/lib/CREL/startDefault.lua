@@ -10,9 +10,12 @@ local ergallaTimer
 local function overrideEnd()
 	tes3.unlock{reference = "chargen door hall"}
 	tes3.messageBox("Holy fuck, this works.")
+	common.setup()
 end
 
 -- Ergalla also needs disable/enable player controls!
+
+--do I even need to place these papars on the table
 
 local function overrideScriptErgalla08()
 	tes3.say{reference = "chargen class", soundPath = "vo\\Misc\\CharGen Class4.wav", subtitle = "Take your papers off the table and go see Captain Gravius."}
@@ -22,12 +25,12 @@ end
 local function overrideScriptErgalla07()
 	tes3.say{reference = "chargen class", soundPath = "vo\\Misc\\CharGen Class3.wav", subtitle = "Show your papers to the Captain when you exit to get your release fee."}
 	--timer.start{ duration = 8, type = timer.simulate, callback = overrideScriptErgalla08 }
-	timer.start{ duration = 8, type = timer.simulate, callback = overrideEnd }
+	timer.start{ duration = 6, type = timer.simulate, callback = overrideEnd }
 end
 
 local function overrideScriptErgalla06()
 	tes3.addItem{reference = tes3.mobilePlayer, item = "CharGen StatsSheet"}
-	timer.start{ duration = 0.5, type = timer.simulate, callback = overrideScriptErgalla07 }
+	timer.start{ duration = 2, type = timer.simulate, callback = overrideScriptErgalla07 }
 end
 
 local function overrideScriptErgalla05()
@@ -213,16 +216,11 @@ end
 function this.chooseModeDefault()
 	event.trigger("[CREL] mode chosen")
 	event.trigger("[CREL] default mode chosen")
-	--REWORK this once the feature gets added to MWSE
-	--local region = tes3.findRegion("Bitter Coast Region")
-	common.disableControls()
 
-	--overcast (for nice looks)
-	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
-		if (region.id == "Bitter Coast Region") then
-			region:changeWeather(3)
-		end
-	end
+	local region = tes3.findRegion("Bitter Coast Region")
+	region:changeWeather(3)
+
+	common.disableControls()
 
 	common.go(61, -135, 24, 340, "Imperial Prison Ship")
 
