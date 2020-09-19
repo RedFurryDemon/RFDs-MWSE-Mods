@@ -6,6 +6,7 @@ local this = {}
 
 local menus = require("CREL.menus")
 local menuB = require("CREL.menuBeginnings") --temporary
+local common = require("CREL.common") --probably temporary?
 
 local classList = {}
 this.sortedClassList = {}
@@ -44,11 +45,11 @@ local pcClass
 function this.setClass()
 	tes3ui.findMenu(classMenuID):destroy()
     tes3ui.leaveMenuMode()
-	tes3.messageBox("class picked but DOESN'T WORK YET")
-	menuB.createBeginningMenu()
-	--tes3.runLegacyScript{command = "coc Vivec"}
 	--tes3.mobilePlayer.class = pcClass
-	--tes3.player.baseObject.class = pcClass
+	tes3.player.baseObject.class = pcClass
+	tes3.messageBox("class picked, all hail Saint Null")
+	menuB.createBeginningMenu()
+	--common.setup() --TEMP
 end
 --------------------------------------------------------------------------------------------
 
@@ -257,46 +258,16 @@ function this.createClassMenu()
 	---------------------MENU BLOCK: class list
 
     local classListBlock = innerBlock:createVerticalScrollPane{ id = tes3ui.registerID("crelClassListBlock") }
-		classListBlock.layoutHeightFraction = 1.0
+		--classListBlock.layoutHeightFraction = 1.0
+		classListBlock.heightProportional = 1
 		classListBlock.minWidth = 200
 		classListBlock.autoWidth = true
 		classListBlock.paddingAllSides = 4
 		classListBlock.borderRight = 6
 
---call sorting function here
 	---------------------FUNCTION: sort class list alphabetically
 
 	this.sortedClassList = menus.createSortedList("name", classList, this.sortedClassList)
-    --[[local sort_func = function(a, b)
-        return string.lower(a.name) < string.lower(b.name)
-    end
-
-    for _, class in pairs(classList) do
-        table.insert(this.sortedClassList, class)
-    end
-    table.sort(this.sortedClassList, sort_func)]]
-
-    --Default "No background" button
-    
-    --[[local noBGButton = perkListBlock:createTextSelect{ text = "-Select Background-" }
-    do
-        noBGButton.color = tes3ui.getPalette("disabled_color")
-        noBGButton.widget.idle = tes3ui.getPalette("disabled_color")
-        noBGButton.autoHeight = true
-        noBGButton.layoutWidthFraction = 1.0
-        noBGButton.paddingAllSides = 2
-        noBGButton.borderAllSides = 2
-
-        noBGButton:register("mouseClick", function()
-            data.currentBackground = nil
-            local header = tes3ui.findMenu(classMenuID):findChild(classDescriptionHeaderID)
-            header.text = "No Background Selected"
-        
-            local description = tes3ui.findMenu(classMenuID):findChild(classDescriptionID)
-            description.text = "Select a Background from the list."
-            description:updateLayout()
-        end)
-    end]]
 
     ---------------------MENU CONTENT: classes
     for _, class in pairs(this.sortedClassList) do
@@ -357,7 +328,7 @@ function this.createClassMenu()
     local classSpecBlock = classInfoBlock:createThinBorder()
 	do
 		classSpecBlock.flowDirection = "top_to_bottom"
-		classSpecBlock.autoHeight = true
+		classSpecBlock.height = 60
 		classSpecBlock.width = 400
 		classSpecBlock.paddingAllSides = 10
 		classSpecBlock.borderRight = 6
@@ -371,7 +342,7 @@ function this.createClassMenu()
 	local classAttrBlock = classInfoBlock:createThinBorder()
 	do
 		classAttrBlock.flowDirection = "top_to_bottom"
-		classAttrBlock.autoHeight = true
+		classAttrBlock.height = 80
 		classAttrBlock.width = 400
 		classAttrBlock.paddingAllSides = 10
 		classAttrBlock.borderRight = 6
@@ -389,7 +360,7 @@ function this.createClassMenu()
     do
         skillBlock = rightBlock:createBlock()
 		skillBlock.width = 400
-		skillBlock.height = 140
+		skillBlock.autoHeight = true
         skillBlock.flowDirection = "left_to_right"
         skillBlock.paddingAllSides = 0
 		skillBlock.paddingTop = 6
@@ -397,7 +368,7 @@ function this.createClassMenu()
 
     local classMajorSkillBlock = skillBlock:createThinBorder()
 	do
-		classMajorSkillBlock.height = 120
+		classMajorSkillBlock.height = 106
 		classMajorSkillBlock.widthProportional = 1.0
 		classMajorSkillBlock.paddingAllSides = 10
 		classMajorSkillBlock.borderRight = 3
@@ -406,7 +377,7 @@ function this.createClassMenu()
 
 	local classMinorSkillBlock = skillBlock:createThinBorder()
 	do
-		classMinorSkillBlock.height = 120
+		classMinorSkillBlock.height = 106
 		classMinorSkillBlock.widthProportional = 1.0
 		classMinorSkillBlock.paddingAllSides = 10
 		classMinorSkillBlock.borderLeft = 3
@@ -442,75 +413,6 @@ function this.createClassMenu()
 
     tes3ui.enterMenuMode(classMenuID)
     --noBGButton:triggerEvent("mouseClick")
-end
-
-local optionsMenuID = tes3ui.registerID("crelOptionsMenu")
-
-function this.createOptionsMenu()
-	local optionsMenu = tes3ui.createMenu{id = optionsMenuID, fixedFrame = true}
-
-	local outerOptionsBlock = optionsMenu:createBlock()
-	do
-		outerOptionsBlock.flowDirection = "top_to_bottom"
-		--outerOptionsBlock.autoHeight = true
-		outerOptionsBlock.height = 600
-		--outerOptionsBlock.autoWidth = true
-		outerOptionsBlock.width = 400
-
-    	local title = outerOptionsBlock:createLabel{ id = tes3ui.registerID("crelOptionsHeading"), text = "Optional settings:" }
-		title.absolutePosAlignX = 0.5
-		title.borderTop = 4
-		title.borderBottom = 4
-	end
-
-	local factionMenu = mwse.mcm.createDropdown( outerOptionsBlock,
-        {
-            label = "Faction",
-            options = {    --TEST
-                { label = "NONE", value = nil},
-                { label = "Great House Redoran", value = "Redoran"},
-                { label = "Great House Hlaalu", value = "Hlaalu"},
-				{ label = "Great House Indoril", value = "T_Mw_HouseIndoril"},
-				{ label = "Great House Dres", value = "T_Mw_HouseDres"},
-				{ label = "Great House Telvani", value = "Telvanni"},
-				{ label = "Great House Dagoth", value = "Sixth House"},
-				{ label = "Tribunal Temple", value = "Temple"},
-				{ label = "Morag Tong", value = "Morag Tong"},
-				{ label = "Camonna Tong", value = "Camonna Tong"},
-				{ label = "Imperial Legion", value = "Imperial Legion"},
-				{ label = "Fighters Guild", value = "Fighters Guild"},
-				{ label = "Mages Guild", value = "Mages Guild"},
-				{ label = "Thieves Guild", value = "Thieves Guild"},
-				{ label = "Ashlanders", value = "Ashlanders"},
-				{ label = "Census and Excise Office", value = "Census and Excise"},
-				{ label = "Dark Brotherhood", value = "Dark Brotherhood"},
-				{ label = "East Empire Company", value = "East Empire Company"},
-				{ label = "Imperial Cult", value = "Imperial Cult"},
-				{ label = "Imperial Knights", value = "Imperial Knights"},
-				{ label = "Skaal", value = "Skaal"},
-				{ label = "Twin Lamps", value = "Twin Lamps"},
-				--{ label = "", value = ""},
-				{ label = "East Navy", value = "T_Mw_ImperialNavy"},
-				{ label = "Imperial Archaeological Society", value = "T_Glb_ArchaeologicalSociety"},
-				--[[				{ label = "", value = ""},
-				{ label = "Niben Hierophants", value = "T_Cyr_NibenHierophants"},
-				{ label = "Imperial Curia", value = "T_Cyr_ImperialCuria"},
-								{ label = "", value = ""},
-				{ label = "", value = ""},
-				{ label = "", value = ""},
-								{ label = "", value = ""},
-				{ label = "", value = ""},
-				{ label = "", value = ""}]]
-            },
-            variable = mwse.mcm.createTableVariable{
-                id = "pcFaction",
-                table = this
-            }
-        }
-    )
-
-	tes3ui.enterMenuMode(optionsMenuID)
-
 end
 
 return this

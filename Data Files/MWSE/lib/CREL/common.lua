@@ -9,7 +9,8 @@ local this = {}
 ]]
 
 function this.go(xpos, ypos, zpos, zrot, destination)
-	mwscript.positionCell{reference = tes3.mobilePlayer, cell = destination, x = xpos, y = ypos, z = zpos, rotation = zrot}
+	tes3.positionCell{ cell = tes3.getCell{id = destination}, orientation = {0, 0, zrot}, position = {xpos, ypos, zpos}, reference = tes3.mobilePlayer }
+	--mwscript.positionCell{reference = tes3.mobilePlayer, cell = destination, x = xpos, y = ypos, z = zpos, rotation = zrot}
 	tes3.messageBox("done") --debug, remove later
 end
 

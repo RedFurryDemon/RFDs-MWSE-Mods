@@ -2,6 +2,7 @@ local this = {}
 local menus = require("CREL.menus")
 local menuB = require("CREL.menuBeginnings")
 local menuC = require("CREL.menuClasses")
+local common = require("CREL.common")
 
 --local ccng = include("Aleist3r.Character Creation Name Generator.MenuNameGenerator")
 
@@ -23,21 +24,21 @@ local debug = true
 
 --the logging functions are used to assess chargen state and prevent overlapping
 
-local function nameisset()
+local function stageFourDone()
 tes3.player.baseObject.name = menus.pcName
 	--tes3.setGlobal()
 	if (debug) then tes3.messageBox("name: %s", menus.pcName) end
-	mwse.log("[CREL] custom mode - bbbbbbbbbbbbbbb")
+	mwse.log("[CREL] custom mode - player name: %s", menus.pcName)
 	menuC.createClassMenu()
 	--menus.createOptionsMenu()
 	--menuB.createBeginningMenu()
 end
 
 local function stageThreeDone()
-	if (debug) then tes3.messageBox("[CREL] custom mode - AAAAAAAAAAA set") end
-	mwse.log("[CREL] custom mode - AAAAAAAAAAAAAA set")
+	if (debug) then tes3.messageBox("[CREL] custom mode - something happened") end
+	mwse.log("[CREL] custom mode - something happened")
 	--menus.createClassMenu()
-	menus.createMenuName(0.1, nameisset)
+	menus.createMenuName(0.1, stageFourDone)
 	--ccng.showNameGenerationMenu()
 end
 

@@ -217,8 +217,9 @@ function this.chooseModeDefault()
 	event.trigger("[CREL] mode chosen")
 	event.trigger("[CREL] default mode chosen")
 
-	local region = tes3.findRegion("Bitter Coast Region")
-	region:changeWeather(3)
+	--sol3 stuff!
+	--local region = tes3.findRegion("Bitter Coast Region")
+	--region:changeWeather(3)
 
 	common.disableControls()
 

@@ -65,6 +65,7 @@ local crelStartDefaultCity = {
 	locations = {
 		loc1 = {
 			locData = {30292, -74390, 543, -159, "Vivec, Foreign Quarter"},
+			name = "Vivec",
 		},
 		loc2 = {
 			locData = {-18751, 52268, 1632, 73, "Ald-ruhn"},

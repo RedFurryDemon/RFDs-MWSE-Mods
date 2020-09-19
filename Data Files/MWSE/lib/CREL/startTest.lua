@@ -104,7 +104,8 @@ function this.chooseModeTest()
 
 	common.addStartItems(testItems)
 	common.addStartSpells(testSpells)
-	common.go(-22963, -15544, 516, 42, "Balmora")
+	common.go(-22963, -15544, 516, 24, "Balmora")
+	--mwscript.positionCell{reference = tes3.mobilePlayer, cell = "Balmora", x = -22963, y = -15544, z = 516, rotation = 24}
 
 	timer.start{ duration = 0.2, type = timer.simulate, callback = common.setup }
 
